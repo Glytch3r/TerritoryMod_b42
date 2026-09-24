@@ -1,0 +1,25 @@
+VERSION = 1,
+
+option MultiBase.Limit
+{
+	type = integer, min = 0, max = 99, default = 0,
+	page = MultiBase, translation = MultiBase_Limit,
+}
+
+option MultiBase.AllowTeleport
+{
+	type = boolean, default = false,
+	page = MultiBase, translation = MultiBase_AllowTeleport,
+}
+
+option MultiBase.AccessAnywhere
+{
+	type = boolean, default = true,
+	page = MultiBase, translation = MultiBase_AccessAnywhere,
+}
+
+option MultiBase.AllowSetSpawnPoint
+{
+	type = boolean, default = true,
+	page = MultiBase, translation = MultiBase_AllowSetSpawnPoint,
+}
