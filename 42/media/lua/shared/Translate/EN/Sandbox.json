@@ -1,6 +1,6 @@
 {
     "Sandbox_MultiBase": "Safehouse Raid Reclaim",
-    "Sandbox_MultiBase_Limit": "MultiBase Limit",
+    "Sandbox_MultiBase_Limit": "Territories Limit",
     "Sandbox_MultiBase_Limit_tooltip": "Set 0 unlimited - Set 1 same as vanilla",
     "Sandbox_MultiBase_AllowTeleport": "Allow players to teleport to safehouses",
     "Sandbox_MultiBase_AllowTeleport_tooltip": "Allows non-admin players to use the safehouse teleport submenu. Admins can always use it.",
