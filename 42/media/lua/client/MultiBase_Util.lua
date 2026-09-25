@@ -24,7 +24,10 @@ MultiBase = MultiBase or {}
 function MultiBase.getCount(targ)
 	return #MultiBase.getSH(targ)
 end
-
+function MultiBase.isAdm()
+    local pl = getPlayer()
+    return ((pl and string.lower(pl:getAccessLevel()) == "admin") or (isClient() and isAdmin()))
+end
 function MultiBase.getSH(targ)
 	local targUser = targ:getUsername()
 	local hqs = {}

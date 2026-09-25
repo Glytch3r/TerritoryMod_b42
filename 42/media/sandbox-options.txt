@@ -24,12 +24,6 @@ option MultiBase.AllowSetSpawnPoint
 	page = MultiBase, translation = MultiBase_AllowSetSpawnPoint,
 }
 
-option MultiBase.AllowCustomOwner
-{
-	type = boolean, default = true,
-	page = MultiBase, translation = MultiBase_AllowCustomOwner,
-}
-
 option MultiBase.DisableTerritoryContextMenu
 {
 	type = boolean, default = false,

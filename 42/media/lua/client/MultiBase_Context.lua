@@ -66,9 +66,7 @@ function MultiBase.getTerritoryString(pl)
     local safehouses = MultiBase.getPlayerSafehouses(pl)
     local limit = SandboxVars.MultiBase.Limit
     local territoryStr = #safehouses > 1 and "Territories" or "Territory"
-    if limit and limit > 0 then
-        territoryStr = territoryStr .. ": " .. tostring(#safehouses) .. "/" .. tostring(limit)
-    end
+    territoryStr = territoryStr .. ":  " .. tostring(#safehouses) .. " / " .. tostring(limit)
     return territoryStr
 end
 function MultiBase.OpenSH(player, context, worldobjects, test)

@@ -21,6 +21,9 @@
 
 MultiBase = MultiBase or {}
 
+local TERRITORY_UI_BORDER_SPACING = 40
+local TERRITORY_BUTTON_HGT = getTextManager():getFontHeight(UIFont.Small) + 6
+
 
 function MultiBase.getClickedSquare()
     if ISWorldObjectContextMenu and ISWorldObjectContextMenu.fetchVars then return ISWorldObjectContextMenu.fetchVars.clickedSquare end
@@ -71,7 +74,7 @@ function MultiBase.getPlayerSafehouses(pl)
 end
 
 function MultiBase.openTerritoryManager(safehouse, pl)
-    local width = 500 + getCore():getOptionFontSizeReal() * 30
+    local width = 540 + getCore():getOptionFontSizeReal() * 30
     local safehouseUI = TerritoryManager:new((getCore():getScreenWidth() - width) / 2, getCore():getScreenHeight() / 2 - 225, width, 450, safehouse, pl)
     safehouseUI.safehouses = MultiBase.getPlayerSafehouses(pl)
     safehouseUI:initialise()
@@ -84,18 +87,19 @@ TerritoryManager = ISSafehouseUI:derive("TerritoryManager")
 
 function TerritoryManager:initialise()
     ISSafehouseUI.initialise(self)
+    self.nameLbl:setName("Territory Manager")
+    self.changeTitle:setTitle("Change Title")
     self.changeTitle.onclick = TerritoryManager.onClick
 
     self:applyTheme()
 
-    self.territoryLabel = ISLabel:new(self.nameLbl:getRight() + 120, UI_BORDER_SPACING + 1, BUTTON_HGT,
-        MultiBase.getTerritoryString(self.player), 1, 1, 1, 1, UIFont.Small, true)
+    self.territoryLabel = ISLabel:new(self.width/2-25, 2, TERRITORY_BUTTON_HGT, MultiBase.getTerritoryString(self.player), 1, 1, 1, 1, UIFont.Medium, true)
     self.territoryLabel:initialise()
     self.territoryLabel:instantiate()
     self:addChild(self.territoryLabel)
-
-    self.safehouseSelector = ISComboBox:new(self.territoryLabel:getRight() + UI_BORDER_SPACING, UI_BORDER_SPACING,
-        220, BUTTON_HGT, self, TerritoryManager.onSafehouseSelected)
+ 
+    self.safehouseSelector = ISComboBox:new(340, TERRITORY_UI_BORDER_SPACING + TERRITORY_BUTTON_HGT + 35,
+        220, TERRITORY_BUTTON_HGT, self, TerritoryManager.onSafehouseSelected)
     self.safehouseSelector:initialise()
     self.safehouseSelector:instantiate()
     for _, safehouse in ipairs(self.safehouses or {}) do
@@ -106,26 +110,19 @@ function TerritoryManager:initialise()
     end
     self:addChild(self.safehouseSelector)
 
-    self.teleportButton = ISButton:new(self.no:getX() - 120, self.no:getY(), 110, BUTTON_HGT,
-        "Teleport", self, TerritoryManager.onClick)
+    self.teleportButton = ISButton:new(self.no:getX() - 120, self.no:getY(), 110, TERRITORY_BUTTON_HGT, "Teleport", self, TerritoryManager.onClick)
     self.teleportButton.internal = "TELEPORT"
     self.teleportButton:initialise()
     self.teleportButton:instantiate()
     self:addChild(self.teleportButton)
 
-    self.customOwnerButton = ISButton:new(self.changeOwnership:getX() - 125, self.changeOwnership:getY(), 120, BUTTON_HGT,
-        "Custom Owner", self, TerritoryManager.onClick)
-    self.customOwnerButton.internal = "CUSTOMOWNER"
-    self.customOwnerButton:initialise()
-    self.customOwnerButton:instantiate()
-    self:addChild(self.customOwnerButton)
     self:applyTheme()
 end
-
+-----------------------            ---------------------------
 function TerritoryManager:applyTheme()
     local red = {r=0.75, g=0.05, b=0.05, a=1}
     local darkRed = {r=0.35, g=0.015, b=0.015, a=0.96}
-    local black = {r=0.015, g=0.015, b=0.015, a=0.97}
+    local black = {r=0.10, g=0.008, b=0.008, a=0.98}
     local hover = {r=0.55, g=0.03, b=0.03, a=1}
 
     self.backgroundColor = black
@@ -149,12 +146,13 @@ function TerritoryManager:applyTheme()
             child.borderColor = red
             child.textColor = {r=1, g=1, b=1, a=1}
         elseif child.setColor then
-            child:setColor(1, 0.75, 0.75, 1)
+            child:setColor(0.459, 0.490, 0.435, 1)
         end
     end
     if self.territoryLabel then self.territoryLabel:setColor(1, 0.25, 0.25, 1) end
 end
 
+-----------------------            ---------------------------
 function TerritoryManager:onSafehouseSelected(combo)
     local safehouse = combo:getOptionData(combo.selected)
     if not safehouse then return end
@@ -170,23 +168,22 @@ end
 
 function TerritoryManager:updateButtons()
     ISSafehouseUI.updateButtons(self)
+    self.territoryLabel:setName(MultiBase.getTerritoryString(self.player))
     self.teleportButton.enable = SandboxVars.MultiBase.AllowTeleport == true
     local canChangeOwner = self:isOwner() or self:hasPrivilegedAccessLevel()
     self.changeOwnership:setVisible(canChangeOwner)
-    self.customOwnerButton.enable = SandboxVars.MultiBase.AllowCustomOwner ~= false
-    self.customOwnerButton:setVisible(canChangeOwner)
 end
 
 function TerritoryManager:onClick(button)
     if button.internal == "TELEPORT" then
-        if SandboxVars.MultiBase.AllowTeleport == true then
+        if SandboxVars.MultiBase.AllowTeleport == true or MultiBase.isAdm() then
             MultiBase.teleportToSafehouse(self.safehouse, self.player)
         end
         return
     end
     if button.internal == "CHANGETITLE" then
         local modal = ISTextBox:new(self.x + 200, 200, 280, 180,
-            getText("IGUI_SafehouseUI_ChangeTitle"), self.safehouse:getTitle(), nil,
+            getText("IGUI_SafehouseUI_ChangeTitle"), self.safehouse:getTitle(), self,
             TerritoryManager.onChangeTitle)
         modal.safehouse = self.safehouse
         modal.ui = self
@@ -194,43 +191,13 @@ function TerritoryManager:onClick(button)
         modal:addToUIManager()
         return
     end
-    if button.internal == "CUSTOMOWNER" then
-        if SandboxVars.MultiBase.AllowCustomOwner == false then return end
-        local modal = ISModalDialog:new(0, 0, 350, 150, "Owner Username", false, self,
-            TerritoryManager.onOwnerUsername)
-        modal.ui = self
-        modal:initialise()
-        modal:addToUIManager()
-        local entry = ISTextEntryBox:new("", 20, 60, 310, 25)
-        entry:initialise()
-        entry:instantiate()
-        modal:addChild(entry)
-        modal.entry = entry
-        return
-    end
     ISSafehouseUI.onClick(self, button)
 end
 
-function TerritoryManager.onOwnerUsername(button)
-    if button.internal ~= "OK" then return end
-    local ui = button.parent.ui
-    local username = luautils.trim(button.parent.entry:getText() or "")
-    if username == "" then return end
-    local target = getPlayerFromUsername(username)
-    if not target then
-        ui.player:setHaloNote("Player is not online", 250, 40, 40, 900)
-        return
-    end
-    if target:getUsername() == ui.safehouse:getOwner() then return end
-    sendSafehouseChangeOwner(ui.safehouse, target:getUsername())
-    ui:populateList()
-end
-
-function TerritoryManager.onChangeTitle(button)
+function TerritoryManager.onChangeTitle(ui, button)
     if button.internal ~= "OK" then return end
     local title = button.parent.entry:getText()
     if not title or title:gsub("%s+", "") == "" then return end
-    local ui = button.parent.ui
     for i = 0, SafeHouse.getSafehouseList():size() - 1 do
         local safehouse = SafeHouse.getSafehouseList():get(i)
         if safehouse ~= ui.safehouse and tostring(safehouse:getTitle()) == title then
@@ -249,6 +216,9 @@ function MultiBase.teleportToSafehouse(safehouse, pl)
         pl:teleportTo(safehouse:getX(), safehouse:getY(), 0)
     end
 end
+
+
+
 -----------------------            ---------------------------
 Events.OnGameStart.Add(function()
     local hook = ISUserPanelUI.onOptionMouseDown
