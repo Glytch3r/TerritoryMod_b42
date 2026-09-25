@@ -50,7 +50,11 @@ function TerritoryManager:onSafehouseSelected(combo)
 end
 function TerritoryManager:onClickRespawn(_, enabled) sendSafehouseChangeRespawn(self.safehouse, self.player:getUsername(), enabled) end
 function TerritoryManager:updateButtons()
-    ISSafehouseUI.updateButtons(self); self.territoryLabel:setName(MultiBase.getTerritoryString(self.player)); self.teleportButton.enable=SandboxVars.MultiBase.AllowTeleport==true; self.changeOwnership:setVisible(self:isOwner() or self:hasPrivilegedAccessLevel())
+    ISSafehouseUI.updateButtons(self)
+    self.territoryLabel:setName(MultiBase.getTerritoryString(self.player))
+    self.teleportButton.enable=SandboxVars.MultiBase.AllowTeleport==true
+    self.respawn.enable=SandboxVars.MultiBase.AllowSetSpawnPoint==true and getServerOptions():getBoolean("SafehouseAllowRespawn")
+    self.changeOwnership:setVisible(self:isOwner() or self:hasPrivilegedAccessLevel())
 end
 function TerritoryManager:onClick(button)
     if button.internal == "TELEPORT" then if SandboxVars.MultiBase.AllowTeleport==true or MultiBase.isAdm() then MultiBase.teleportToSafehouse(self.safehouse,self.player) end; return end

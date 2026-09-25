@@ -1,30 +1,5 @@
 MultiBase = MultiBase or {}
 
-function MultiBase.promptString(text, callback, target, player, param1, param2)
-    local entry = nil
-
-    local function onClick(self, button, p1, p2)
-        if button.internal == "OK" and entry then
-            local val = entry:getText()
-            if callback then
-                callback(target, val, p1, p2)
-            end
-        end
-    end
-
-    local modal = ISModalDialog:new(0, 0, 300, 150, text or "", false, target, onClick, player, param1, param2)
-    modal:initialise()
-    modal:addToUIManager()
-
-    entry = ISTextEntryBox:new("", 20, 60, modal.width - 40, 25)
-    entry:initialise()
-    entry:instantiate()
-    modal:addChild(entry)
-
-    return modal
-end
-
-
 -----------------------            ---------------------------
 function MultiBase.context(player, context, worldobjects, test)
     if SandboxVars.MultiBase.DisableTerritoryContextMenu then return end
