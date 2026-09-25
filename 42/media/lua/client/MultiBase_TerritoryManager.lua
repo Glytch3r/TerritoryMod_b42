@@ -14,12 +14,14 @@ TerritoryManager = ISSafehouseUI:derive("TerritoryManager")
 
 function TerritoryManager:initialise()
     ISSafehouseUI.initialise(self)
-    self.nameLbl:setName("Territory Manager")
+    self.nameLbl:setName("Safehouse")
     self.changeTitle:setTitle("Change Title")
     self.changeTitle.onclick = TerritoryManager.onClick
-    self.territoryLabel = ISLabel:new(self.width / 2 - 25, 2, TERRITORY_BUTTON_HGT, MultiBase.getTerritoryString(self.player), 1, 1, 1, 1, UIFont.Medium, true)
+    --self.width / 2 - 35
+    self.territoryLabel = ISLabel:new(340, TERRITORY_UI_BORDER_SPACING + TERRITORY_BUTTON_HGT + 35, TERRITORY_BUTTON_HGT, MultiBase.getTerritoryString(self.player), 1, 1, 1, 1, UIFont.Medium, true)
     self.territoryLabel:initialise(); self.territoryLabel:instantiate(); self:addChild(self.territoryLabel)
-    self.safehouseSelector = ISComboBox:new(340, TERRITORY_UI_BORDER_SPACING + TERRITORY_BUTTON_HGT + 35, 220, TERRITORY_BUTTON_HGT, self, TerritoryManager.onSafehouseSelected)
+
+    self.safehouseSelector = ISComboBox:new(340, TERRITORY_UI_BORDER_SPACING + TERRITORY_BUTTON_HGT + 65, 220, TERRITORY_BUTTON_HGT, self, TerritoryManager.onSafehouseSelected)
     self.safehouseSelector:initialise(); self.safehouseSelector:instantiate()
     for _, safehouse in ipairs(self.safehouses or {}) do self.safehouseSelector:addOptionWithData(tostring(safehouse:getTitle()), safehouse) end
     for i, safehouse in ipairs(self.safehouses or {}) do if safehouse == self.safehouse then self.safehouseSelector.selected = i break end end
