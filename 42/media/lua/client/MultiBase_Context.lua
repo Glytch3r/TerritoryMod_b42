@@ -27,6 +27,7 @@ end
 
 -----------------------            ---------------------------
 function MultiBase.context(player, context, worldobjects, test)
+    if SandboxVars.MultiBase.DisableTerritoryContextMenu then return end
     local pl = getSpecificPlayer(player)
     local sq = MultiBase.getClickedSquare()
     if not pl or not sq then return end
@@ -59,7 +60,19 @@ Events.OnFillWorldObjectContextMenu.Remove(MultiBase.context)
 Events.OnFillWorldObjectContextMenu.Add(MultiBase.context)
 
 -----------------------            ---------------------------
+
+function MultiBase.getTerritoryString(pl)
+    pl = pl or getPlayer()
+    local safehouses = MultiBase.getPlayerSafehouses(pl)
+    local limit = SandboxVars.MultiBase.Limit
+    local territoryStr = #safehouses > 1 and "Territories" or "Territory"
+    if limit and limit > 0 then
+        territoryStr = territoryStr .. ": " .. tostring(#safehouses) .. "/" .. tostring(limit)
+    end
+    return territoryStr
+end
 function MultiBase.OpenSH(player, context, worldobjects, test)
+    if SandboxVars.MultiBase.DisableTerritoryContextMenu then return end
     local pl = getSpecificPlayer(player)
     local safehouses = MultiBase.getPlayerSafehouses(pl)
     if #safehouses == 0 then return end
@@ -74,12 +87,7 @@ function MultiBase.OpenSH(player, context, worldobjects, test)
 
     context:removeOptionByName(getText("ContextMenu_ViewSafehouse"))
 
-    local territoryName = #safehouses > 1 and "Territories" or "Territory"
-    local limit = SandboxVars.MultiBase.Limit
-    if limit and limit > 0 then
-        territoryName = territoryName .. " " .. tostring(#safehouses) .. "/" .. tostring(limit)
-    end
-
+    local territoryName = MultiBase.getTerritoryString(pl)
     local main = context:addOptionOnTop(territoryName)
     local safehouseMenu = ISContextMenu:getNew(context)
     context:addSubMenu(main, safehouseMenu)

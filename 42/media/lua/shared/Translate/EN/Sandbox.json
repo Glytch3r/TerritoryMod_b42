@@ -7,5 +7,9 @@
     "Sandbox_MultiBase_AccessAnywhere": "Access Territory Options Anywhere",
     "Sandbox_MultiBase_AccessAnywhere_tooltip": "Allows Territory Options to be opened anywhere instead of only near a safehouse.",
     "Sandbox_MultiBase_AllowSetSpawnPoint": "Allow setting spawn point through Territory Options",
-    "Sandbox_MultiBase_AllowSetSpawnPoint_tooltip": "Allows players to choose which territory is used as their safehouse spawn point."
+    "Sandbox_MultiBase_AllowSetSpawnPoint_tooltip": "Allows players to choose which territory is used as their safehouse spawn point.",
+    "Sandbox_MultiBase_AllowCustomOwner": "Allow custom territory owner",
+    "Sandbox_MultiBase_AllowCustomOwner_tooltip": "Adds a username-based territory owner button alongside the standard player list button.",
+    "Sandbox_MultiBase_DisableTerritoryContextMenu": "Disable Territory context menu",
+    "Sandbox_MultiBase_DisableTerritoryContextMenu_tooltip": "Disables the custom Territory context-menu options."
 }
